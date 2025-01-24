@@ -39,9 +39,15 @@ module.exports = async client => {
 				secret: process.env.DISCORD_SECRET,
 			},
 		},
-		generateStateFunction: req => {
+		generateStateFunction: (req, res) => {
 			const state = randomBytes(12).toString('hex');
-			fastify.states.set(state, req.query.r);
+			fastify.states.set(state, req.query.r || '/');
+			res.setCookie('oauth2-redirect-state', state, {
+				httpOnly: true,
+				path: '/',
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'Lax',
+			});
 			return state;
 		},
 		name: 'discord',

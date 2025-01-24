@@ -111,7 +111,22 @@ module.exports = class TicketArchiver {
 					attachments: [...message.attachments.values()],
 					components: [...message.components.values()],
 					content: message.content,
-					embeds: message.embeds.map(embed => ({ ...embed })),
+					embeds: message.embeds.map(embed => ({
+						title: embed.title,
+						description: embed.description,
+						url: embed.url,
+						timestamp: embed.timestamp,
+						color: embed.color,
+						footer: embed.footer,
+						image: embed.image,
+						thumbnail: embed.thumbnail,
+						author: embed.author,
+						fields: embed.fields?.map(field => ({
+							name: field.name,
+							value: field.value,
+							inline: field.inline
+						})) || []
+					})),
 					reference: reference ? reference.id : null,
 				}),
 			),

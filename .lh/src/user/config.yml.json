@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/user/config.yml",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1737685136790,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1737685136790,
+            "name": "Commit-0",
+            "content": "#####################################################\n##  ____                                        _  ##\n## |  _ \\  (_)  ___    ___    ___    _ __    __| | ##\n## | | | | | | / __|  / __|  / _ \\  | '__|  / _` | ##\n## | |_| | | | \\__ \\ | (__  | (_) | | |    | (_| | ##\n## |____/  |_| |___/  \\___|  \\___/  |_|     \\__,_| ##\n##   _____              _             _            ##\n##  |_   _| (_)   ___  | | __   ___  | |_   ___    ##\n##    | |   | |  / __| | |/ /  / _ \\ | __| / __|   ##\n##    | |   | | | (__  |   <  |  __/ | |_  \\__ \\   ##\n##    |_|   |_|  \\___| |_|\\_\\  \\___|  \\__| |___/   ##\n##                                                 ##\n##    Documentation: https://discordtickets.app    ##\n##    Support:        https://lnk.earth/discord    ##\n#####################################################\n\nlogs:\n  files:\n    directory: ./logs\n    enabled: true\n    keepFor: 30\n  level: info\npresence:\n  activities:\n    - name: /new\n    - name: with {totalTickets} tickets\n    - name: \"{openTickets} tickets\"\n      type: 3\n    - name: \"{avgResponseTime} response time\"\n      type: 3\n  interval: 20\n  status: online\nstats: true\ntemplates:\n  transcript: transcript.html\nupdates: true\n"
+        }
+    ]
+}

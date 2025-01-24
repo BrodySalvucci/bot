@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Transcript - {{ ticket.id }}</title>
+    <style>
+        :root {
+            --background: #36393f;
+            --text: #dcddde;
+            --secondary: #2f3136;
+            --accent: #5865f2;
+            --message-hover: #32353b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--secondary);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .ticket-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .ticket-info div {
+            margin: 5px 0;
+        }
+
+        .ticket-info strong {
+            color: white;
+        }
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            display: flex;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .message:hover {
+            background: var(--message-hover);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .username {
+            color: white;
+            font-weight: 500;
+        }
+
+        .timestamp {
+            color: #72767d;
+            font-size: 0.8em;
+        }
+
+        .message-text {
+            color: var(--text);
+        }
+
+        .embed {
+            margin-top: 8px;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 4px solid;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .embed-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .embed-description {
+            color: var(--text);
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .embed-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .embed-field {
+            margin-bottom: 4px;
+        }
+
+        .embed-field-name {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .embed-field-value {
+            color: var(--text);
+            font-size: 0.9em;
+        }
+
+        .embed-footer {
+            margin-top: 8px;
+            color: #72767d;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .embed-footer img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .attachment {
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .attachment a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .attachment a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #72767d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ticket Transcript</h1>
+            <div>{{ guildName }}</div>
+        </div>
+
+        <div class="ticket-info">
+            <div><strong>ID:</strong> {{ ticket.id }}</div>
+            <div><strong>Number:</strong> {{ ticket.category.name }} #{{ ticket.number }}</div>
+            <div><strong>Topic:</strong> {{ ticket.topic }}</div>
+            <div><strong>Created:</strong> {{ ticket.createdAt }}</div>
+            <div><strong>Created by:</strong> {{ ticket.createdBy.username }} ({{ ticket.createdBy.displayName }})</div>
+            <div><strong>Closed:</strong> {{ ticket.closedAt }}</div>
+            <div><strong>Closed by:</strong> {{ ticket.closedBy.username }} ({{ ticket.closedBy.displayName }})</div>
+            <div><strong>Reason:</strong> {{ ticket.closedReason }}</div>
+            <div><strong>Claimed by:</strong> {{#ticket.claimedBy}}{{ username }} ({{ displayName }}){{/ticket.claimedBy}}{{^ticket.claimedBy}}Not claimed{{/ticket.claimedBy}}</div>
+        </div>
+
+        <div class="messages">
+            {{#messages}}
+            <div class="message">
+                <img src="{{ author.avatarURL }}" alt="{{ author.username }}" class="avatar">
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="username">{{ author.username }}</span>
+                        <span class="timestamp">{{ createdAt }}</span>
+                    </div>
+                    <div class="message-text">{{ content.content }}</div>
+                    {{#content.attachments}}
+                    <div class="attachment"><a href="{{ url }}">{{ name }}</a></div>
+                    {{/content.attachments}}
+                    {{#embeds}}
+                    <div class="embed" style="border-left-color: {{ color }};">
+                        {{#title}}<div class="embed-title">{{ title }}</div>{{/title}}
+                        {{#description}}<div class="embed-description">{{ description }}</div>{{/description}}
+                        {{#fields}}
+                        <div class="embed-fields">
+                            <div class="embed-field">
+                                <div class="embed-field-name">{{ name }}</div>
+                                <div class="embed-field-value">{{ value }}</div>
+                            </div>
+                        </div>
+                        {{/fields}}
+                        {{#footer}}
+                        <div class="embed-footer">
+                            {{#icon_url}}<img src="{{ icon_url }}" alt="Footer Icon">{{/icon_url}}
+                            {{ text }}
+                        </div>
+                        {{/footer}}
+                    </div>
+                    {{/embeds}}
+                </div>
+            </div>
+            {{/messages}}
+        </div>
+
+        <div class="footer">
+            Generated by Discord Tickets on {{ timestamp }}
+        </div>
+    </div>
+</body>
+</html>

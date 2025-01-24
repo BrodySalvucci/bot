@@ -1,30 +1,151 @@
-#{{ channelName }} ticket transcript
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ channelName }} - Ticket Transcript</title>
+    <style>
+        :root[data-theme="dark"] {
+            --bg-primary: #313338;
+            --bg-secondary: #2b2d31;
+            --text-primary: #f2f3f5;
+            --text-secondary: #b5bac1;
+            --accent: #5865f2;
+            --border: #3f4147;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+        .header h1 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .ticket-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            color: var(--text-secondary);
+        }
+        .ticket-info div {
+            margin-bottom: 0.5rem;
+        }
+        .messages {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+        }
+        .message {
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .message:hover {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        .message-info {
+            flex-grow: 1;
+        }
+        .message-header {
+            margin-bottom: 0.25rem;
+        }
+        .username {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .timestamp {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        .message-content {
+            color: var(--text-primary);
+            white-space: pre-wrap;
+        }
+        .participants {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .participant {
+            color: var(--text-secondary);
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ channelName }}</h1>
+            <div class="ticket-info">
+                <div><strong>ID:</strong> {{ ticket.id }} ({{ guildName }})</div>
+                <div><strong>Number:</strong> {{ ticket.category.name }} #{{ ticket.number }}</div>
+                <div><strong>Topic:</strong> {{ #ticket.topic }}{{ . }}{{ /ticket.topic }}{{ ^ticket.topic }}(no topic){{ /ticket.topic }}</div>
+                <div><strong>Created:</strong> {{ #ticket }}{{ createdAtFull }}{{ /ticket }}</div>
+                <div><strong>Created by:</strong> {{ #ticket.createdBy }}{{ displayName }} (@{{ username }}){{ /ticket.createdBy }}</div>
+                <div><strong>Closed:</strong> {{ #ticket }}{{ closedAtFull }}{{ /ticket }}</div>
+                <div><strong>Closed by:</strong> {{ #ticket.closedBy }}{{ displayName }} (@{{ username }}){{ /ticket.closedBy }}{{ ^ticket.closedBy }}(automated){{ /ticket.closedBy }}</div>
+                <div><strong>Reason:</strong> {{ #ticket.closedReason }}{{ ticket.closedReason }}{{ /ticket.closedReason }}{{ ^ticket.closedReason }}(no reason){{ /ticket.closedReason }}</div>
+                <div><strong>Claimed by:</strong> {{ #ticket.claimedBy }}{{ displayName }} (@{{ username }}){{ /ticket.claimedBy }}{{ ^ticket.claimedBy }}(not claimed){{ /ticket.claimedBy }}</div>
+                {{ #ticket.feedback }}
+                <div>
+                    <strong>Feedback:</strong>
+                    <div>Rating: {{ rating }}/5</div>
+                    <div>Comment: {{ comment }}{{ ^comment }}(no comment){{ /comment }}</div>
+                </div>
+                {{ /ticket.feedback }}
+            </div>
+        </div>
 
----
+        <div class="participants">
+            <h2>Participants</h2>
+            {{ #ticket.archivedUsers }}
+            <div class="participant">{{ displayName }} (@{{ username }}) - {{ userId }}</div>
+            {{ /ticket.archivedUsers }}
+            {{ #pinned }}
+            <div><strong>Pinned messages:</strong> {{ . }}</div>
+            {{ /pinned }}
+        </div>
 
-* ID: {{ ticket.id }} ({{ guildName }})
-* Number: {{ ticket.category.name }} #{{ ticket.number }}
-* Topic: {{ #ticket.topic }}{{ . }}{{ /ticket.topic }}{{ ^ticket.topic }}(no topic){{ /ticket.topic }}
-* Created on: {{ #ticket }}{{ createdAtFull }}{{ /ticket }}
-* Created by: {{ #ticket.createdBy }}"{{ displayName }}" @{{ username }}#{{ discriminator }}{{ /ticket.createdBy }}
-* Closed on: {{ #ticket }}{{ closedAtFull }}{{ /ticket }}
-* Closed by: {{ #ticket.closedBy }}"{{ displayName }}" @{{ username }}#{{ discriminator }}{{ /ticket.closedBy }}{{ ^ticket.closedBy }}(automated){{ /ticket.closedBy }}
-* Closed because: {{ #ticket.closedReason }}{{ ticket.closedReason }}{{ /ticket.closedReason }}{{ ^ticket.closedReason }}(no reason){{ /ticket.closedReason }}
-* Claimed by: {{ #ticket.claimedBy }}"{{ displayName }}" @{{ username }}#{{ discriminator }}{{ /ticket.claimedBy }}{{ ^ticket.claimedBy }}(not claimed){{ /ticket.claimedBy }}
-{{ #ticket.feedback }}
-* Feedback:
-  * Rating: {{ rating }}/5
-  * Comment: {{ comment }}{{ ^comment }}(no comment){{ /comment }}
-{{ /ticket.feedback }}
-* Participants:
-{{ #ticket.archivedUsers }}
-  * "{{ displayName }}" @{{ username }}#{{ discriminator }} ({{ userId }})
-{{ /ticket.archivedUsers }}
-* Pinned messages: {{ #pinned }}{{ . }}{{ /pinned }}
-
----
-
-{{ #ticket.archivedMessages }}
-<{{ number }}> [{{ createdAtTimestamp }}] {{author.displayName}}: {{ text }}
-
-{{ /ticket.archivedMessages }}
+        <div class="messages">
+            {{ #ticket.archivedMessages }}
+            <div class="message" id="{{ number }}">
+                <div class="message-info">
+                    <div class="message-header">
+                        <span class="username">{{ author.displayName }}</span>
+                        <span class="timestamp">{{ createdAtTimestamp }}</span>
+                    </div>
+                    <div class="message-content">{{ text }}</div>
+                </div>
+            </div>
+            {{ /ticket.archivedMessages }}
+        </div>
+    </div>
+</body>
+</html>

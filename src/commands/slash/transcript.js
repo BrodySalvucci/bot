@@ -181,7 +181,24 @@ module.exports = class TranscriptSlashCommand extends SlashCommand {
 			.setFile(Buffer.from(transcript))
 			.setName(fileName);
 
-		await interaction.editReply({ files: [attachment] });
-		// TODO: add portal link
+		// Save transcript to disk for web access
+		const transcriptPath = join('./user/transcripts/', fileName);
+		fs.mkdirSync('./user/transcripts/', { recursive: true });
+		fs.writeFileSync(transcriptPath, transcript);
+
+		// Generate portal link
+		const portalLink = `${process.env.HTTP_EXTERNAL}/transcripts/${ticketId}`;
+
+		await interaction.editReply({
+			embeds: [
+				new ExtendedEmbedBuilder({
+					iconURL: interaction.guild.iconURL(),
+					text: ticket.guild.footer,
+				})
+					.setColor(ticket.guild.primaryColour)
+					.setDescription(`View this transcript online: ${portalLink}`),
+			],
+			files: [attachment],
+		});
 	}
 };

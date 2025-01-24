@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ channelName }} - Ticket Transcript</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #36393f;
+            color: #dcddde;
+        }
+        .header {
+            background: #2f3136;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 24px;
+        }
+        .header-info {
+            color: #b9bbbe;
+            margin-top: 10px;
+        }
+        .message {
+            display: flex;
+            padding: 10px 20px;
+            margin: 2px 0;
+        }
+        .message:hover {
+            background: #32353b;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+        .message-content {
+            flex: 1;
+        }
+        .message-header {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+        .author-name {
+            color: #fff;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        .timestamp {
+            color: #72767d;
+            font-size: 0.75rem;
+        }
+        .text {
+            color: #dcddde;
+            white-space: pre-wrap;
+        }
+        .system-message {
+            color: #72767d;
+            font-style: italic;
+            padding: 10px 20px;
+        }
+        .attachment {
+            color: #00b0f4;
+            text-decoration: none;
+        }
+        .attachment:hover {
+            text-decoration: underline;
+        }
+        .embed-placeholder {
+            background: #2f3136;
+            border-left: 4px solid #4f545c;
+            margin: 4px 0;
+            padding: 8px 12px;
+            color: #b9bbbe;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>#{{ channelName }}</h1>
+        <div class="header-info">
+            <p>ID: {{ ticket.id }} ({{ guildName }})</p>
+            <p>Number: {{ ticket.category.name }} #{{ ticket.number }}</p>
+            <p>Topic: {{ #ticket.topic }}{{ . }}{{ /ticket.topic }}{{ ^ticket.topic }}(no topic){{ /ticket.topic }}</p>
+            <p>Created on: {{ #ticket }}{{ createdAtFull }}{{ /ticket }}</p>
+            <p>Created by: {{ #ticket.createdBy }}"{{ displayName }}" @{{ username }}#{{ discriminator }}{{ /ticket.createdBy }}</p>
+            <p>Closed on: {{ #ticket }}{{ closedAtFull }}{{ /ticket }}</p>
+            <p>Closed by: {{ #ticket.closedBy }}"{{ displayName }}" @{{ username }}#{{ discriminator }}{{ /ticket.closedBy }}{{ ^ticket.closedBy }}(automated){{ /ticket.closedBy }}</p>
+            {{ #ticket.feedback }}
+            <p>Feedback: {{ rating }}/5 {{ #comment }} - {{ comment }}{{ /comment }}</p>
+            {{ /ticket.feedback }}
+        </div>
+    </div>
+
+    {{ #ticket.archivedMessages }}
+    <div class="message">
+        <img class="avatar" src="{{ author.avatar }}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'" alt="{{ author.displayName }}">
+        <div class="message-content">
+            <div class="message-header">
+                <span class="author-name">{{ author.displayName }}</span>
+                <span class="timestamp">{{ createdAtTimestamp }}</span>
+            </div>
+            <div class="text">{{ content.content }}</div>
+            {{ #content.attachments }}
+            <a href="{{ url }}" class="attachment" target="_blank">📎 {{ name }}</a><br>
+            {{ /content.attachments }}
+            {{ #content.embeds }}
+            <div class="embed-placeholder">[embedded content]</div>
+            {{ /content.embeds }}
+        </div>
+    </div>
+    {{ /ticket.archivedMessages }}
+</body>
+</html>
