@@ -44,7 +44,11 @@ module.exports.isStaff = async (guild, userId) => {
 	const guildMember = guild.members.cache.get(userId) || await guild.members.fetch(userId);
 	if (guildMember.permissions.has(PermissionsBitField.Flags.ManageGuild)) return true;
 	const staffRoles = await client.keyv.get(`cache/guild-staff:${guild.id}`) || await updateStaffRoles(guild);
-	return staffRoles.some(r => guildMember.roles.cache.has(r));
+	console.log('Client config:', client.config);
+	console.log('Team lead roles from config:', client.config?.team_lead_roles);
+	const teamLeadRoles = client.config?.team_lead_roles || [];
+	console.log('Processed team lead roles:', teamLeadRoles);
+	return staffRoles.some(r => guildMember.roles.cache.has(r)) || teamLeadRoles.some(r => guildMember.roles.cache.has(r));
 };
 
 /**

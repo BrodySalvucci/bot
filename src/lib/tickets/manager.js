@@ -43,6 +43,8 @@ const { getSUID } = require('../logging');
  * 	{guild: import('@prisma/client').Guild}} TicketCategoryFeedbackGuild
  */
 
+const TEAM_LEAD_ROLES = ['1195915145101185027', '1195915157138849823', '1315324144417640564', '1315324144434544686'];
+
 module.exports = class TicketManager {
 	constructor(client) {
 		/** @type {import("client")} */
@@ -776,7 +778,7 @@ module.exports = class TicketManager {
 		});
 		const getMessage = this.client.i18n.getLocale(ticket.guild.locale);
 
-		if (!(await isStaff(interaction.guild, interaction.user.id))) { // if user is not staff
+		if (!(await isStaff(interaction.guild, interaction.user.id))) {
 			return await interaction.editReply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -790,27 +792,22 @@ module.exports = class TicketManager {
 			});
 		}
 
-		// Get the member's roles
-		const memberRoles = interaction.member.roles.cache;
-		// Check if member has any team lead roles
-		const isTeamLead = ticket.guild.teamLeadRoles.some(roleId => memberRoles.has(roleId));
-
 		// Create an array to store all permission update promises
 		const permissionUpdates = [
-			// Give the claiming user view access
-			interaction.channel.permissionOverwrites.edit(interaction.user, { 'ViewChannel': true }, `Ticket claimed by ${interaction.user.tag}`),
+		    // Give the claiming user view access
+		    interaction.channel.permissionOverwrites.edit(interaction.user, { 'ViewChannel': true }, `Ticket claimed by ${interaction.user.tag}`),
 		];
 
 		// Handle staff role permissions
 		ticket.category.staffRoles.forEach(roleId => {
-			// If the role is a team lead role or if the current user is a team lead, maintain access
-			if (ticket.guild.teamLeadRoles.includes(roleId) || isTeamLead) {
-				return;
-			}
-			// Remove view access for non-team-lead staff roles
-			permissionUpdates.push(
-				interaction.channel.permissionOverwrites.edit(roleId, { 'ViewChannel': false }, `Ticket claimed by ${interaction.user.tag}`),
-			);
+		    // If the role is a team lead role, maintain access regardless of who claims
+		    if (TEAM_LEAD_ROLES.includes(roleId)) {
+		        return;
+		    }
+		    // Remove view access for non-team-lead staff roles
+		    permissionUpdates.push(
+		        interaction.channel.permissionOverwrites.edit(roleId, { 'ViewChannel': false }, `Ticket claimed by ${interaction.user.tag}`),
+		    );
 		});
 
 		await Promise.all([
@@ -1192,9 +1189,9 @@ module.exports = class TicketManager {
 		this.$count.categories[ticket.categoryId][ticket.createdById] -= 1;
 
 		const { _count: { archivedMessages } } = await this.client.prisma.ticket.findUnique({
-			select: { _count: { select: { archivedMessages: true } } },
+			select: { _count: { select: { archivedMessages: true } },
 			where: { id: ticket.id },
-		});
+		} });
 
 		/** @type {import("@prisma/client").Ticket} */
 		const data = {
