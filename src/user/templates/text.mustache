@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{guildName}} - Ticket #{{ticket.number}}</title>
+    <style>
+        :root {
+            --background: #36393f;
+            --text: #dcddde;
+            --secondary-text: #72767d;
+            --message-hover: #32353b;
+            --divider: #42454a;
+            --header: #ffffff;
+            --link: #00b0f4;
+            --timestamp: #72767d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.4;
+            padding: 20px;
+        }
+
+        .header {
+            color: var(--header);
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--divider);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--secondary-text);
+            font-size: 14px;
+        }
+
+        .ticket-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+
+        .ticket-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .message {
+            padding: 10px 20px;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 15px;
+            transition: background 0.2s;
+        }
+
+        .message:hover {
+            background: var(--message-hover);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #5865f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .username {
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .timestamp {
+            color: var(--timestamp);
+            font-size: 12px;
+        }
+
+        .text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .system-message {
+            color: var(--secondary-text);
+            font-style: italic;
+            padding: 10px 20px;
+        }
+
+        a {
+            color: var(--link);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{guildName}} - Ticket #{{ticket.number}}</h1>
+        <p>Channel: #{{channelName}}</p>
+    </div>
+
+    <div class="ticket-info">
+        <p><strong>Created by:</strong> {{ticket.createdBy.username}} on {{ticket.createdAtFull}}</p>
+        {{#ticket.topic}}<p><strong>Topic:</strong> {{ticket.topic}}</p>{{/ticket.topic}}
+        {{#ticket.claimedBy}}<p><strong>Claimed by:</strong> {{ticket.claimedBy.username}}</p>{{/ticket.claimedBy}}
+        {{#ticket.closedBy}}<p><strong>Closed by:</strong> {{ticket.closedBy.username}} on {{ticket.closedAtFull}}</p>{{/ticket.closedBy}}
+        {{#ticket.closedReason}}<p><strong>Close reason:</strong> {{ticket.closedReason}}</p>{{/ticket.closedReason}}
+        {{#ticket.feedback}}
+        <p><strong>Rating:</strong> {{ticket.feedback.rating}}/5</p>
+        {{#ticket.feedback.comment}}<p><strong>Feedback:</strong> {{ticket.feedback.comment}}</p>{{/ticket.feedback.comment}}
+        {{/ticket.feedback}}
+    </div>
+
+    <div class="messages">
+        {{#ticket.archivedMessages}}
+        <div class="message">
+            <div class="avatar">{{author.username.[0]}}</div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="username">{{author.username}}</span>
+                    <span class="timestamp">{{createdAt}}</span>
+                </div>
+                <div class="text">{{text}}</div>
+            </div>
+        </div>
+        {{/ticket.archivedMessages}}
+    </div>
+</body>
+</html>

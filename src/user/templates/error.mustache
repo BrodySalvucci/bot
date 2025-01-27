@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - {{statusCode}}</title>
+    <style>
+        :root {
+            --background: #36393f;
+            --text: #dcddde;
+            --secondary: #2f3136;
+            --accent: #ed4245;
+            --header: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.4;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .error-container {
+            background: var(--secondary);
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-code {
+            color: var(--accent);
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .error-title {
+            color: var(--header);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            color: var(--text);
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">{{statusCode}}</div>
+        <h1 class="error-title">{{title}}</h1>
+        <p class="error-message">{{message}}</p>
+        <a href="javascript:history.back()" class="back-link">Go Back</a>
+    </div>
+</body>
+</html>

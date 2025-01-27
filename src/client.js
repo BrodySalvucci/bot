@@ -62,6 +62,9 @@ module.exports = class Client extends FrameworkClient {
 		Object.assign(this.config, YAML.parse(fs.readFileSync('./user/config.yml', 'utf8')));
 		Object.assign(this.log, logger(this.config));
 
+		// Initialize staff roles configuration
+		this.config.staff_roles = this.config.staff_roles || [];
+
 		this.banned_guilds = new Set(
 			(() => {
 				let array = fs.readFileSync('./user/banned-guilds.txt', 'utf8').trim().split(/\r?\n/);

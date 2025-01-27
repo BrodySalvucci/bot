@@ -790,9 +790,31 @@ module.exports = class TicketManager {
 			});
 		}
 
-		await Promise.all([
+		// Get the member's roles
+		const memberRoles = interaction.member.roles.cache;
+		// Check if member has any team lead roles
+		const isTeamLead = ticket.guild.teamLeadRoles.some(roleId => memberRoles.has(roleId));
+
+		// Create an array to store all permission update promises
+		const permissionUpdates = [
+			// Give the claiming user view access
 			interaction.channel.permissionOverwrites.edit(interaction.user, { 'ViewChannel': true }, `Ticket claimed by ${interaction.user.tag}`),
-			...ticket.category.staffRoles.map(role => interaction.channel.permissionOverwrites.edit(role, { 'ViewChannel': false }, `Ticket claimed by ${interaction.user.tag}`)),
+		];
+
+		// Handle staff role permissions
+		ticket.category.staffRoles.forEach(roleId => {
+			// If the role is a team lead role or if the current user is a team lead, maintain access
+			if (ticket.guild.teamLeadRoles.includes(roleId) || isTeamLead) {
+				return;
+			}
+			// Remove view access for non-team-lead staff roles
+			permissionUpdates.push(
+				interaction.channel.permissionOverwrites.edit(roleId, { 'ViewChannel': false }, `Ticket claimed by ${interaction.user.tag}`),
+			);
+		});
+
+		await Promise.all([
+			...permissionUpdates,
 			this.client.prisma.ticket.update({
 				data: {
 					claimedBy: {

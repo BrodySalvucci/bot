@@ -1,5 +1,6 @@
 const fastify = require('fastify')({ trustProxy: process.env.HTTP_TRUST_PROXY === 'true' });
 const oauth = require('@fastify/oauth2');
+const session = require('@fastify/session');
 const { randomBytes } = require('crypto');
 const { short } = require('leeks.js');
 const { join } = require('path');
@@ -11,6 +12,16 @@ process.env.ORIGIN = process.env.HTTP_INTERNAL || process.env.HTTP_EXTERNAL;
 module.exports = async client => {
 	// cookies plugin, must be registered before oauth2 since oauth2@7.2.0
 	fastify.register(require('@fastify/cookie'));
+
+	// Add session support
+	fastify.register(session, {
+		cookieName: 'sessionId',
+		secret: process.env.ENCRYPTION_KEY,
+		cookie: {
+			secure: process.env.NODE_ENV === 'production',
+			httpOnly: true
+		}
+	});
 
 	// jwt plugin
 	fastify.register(require('@fastify/jwt'), {
@@ -26,10 +37,13 @@ module.exports = async client => {
 	fastify.register(oauth, {
 		callbackUri: `${process.env.HTTP_EXTERNAL}/auth/callback`,
 		callbackUriParams: { prompt: 'none' },
-		checkStateFunction: async req => {
-			if (req.query.state !== req.cookies['oauth2-redirect-state']) {
+		checkStateFunction: async (req, reply) => {
+			const state = req.query.state;
+			const storedState = fastify.states.get(state);
+			if (!storedState) {
 				throw new Error('Invalid state');
 			}
+			fastify.states.delete(state); // Clean up used state
 			return true;
 		},
 		credentials: {
@@ -39,15 +53,10 @@ module.exports = async client => {
 				secret: process.env.DISCORD_SECRET,
 			},
 		},
-		generateStateFunction: (req, res) => {
-			const state = randomBytes(12).toString('hex');
-			fastify.states.set(state, req.query.r || '/');
-			res.setCookie('oauth2-redirect-state', state, {
-				httpOnly: true,
-				path: '/',
-				secure: process.env.NODE_ENV === 'production',
-				sameSite: 'Lax',
-			});
+		generateStateFunction: (req, reply) => {
+			const state = randomBytes(24).toString('hex');
+			const returnUrl = req.query.r || '/';
+			fastify.states.set(state, returnUrl);
 			return state;
 		},
 		name: 'discord',

@@ -31,6 +31,7 @@ presence:
   interval: 20
   status: online
 stats: true
+team_lead_roles: ["1234617411773403187", "1195915145101185027"]
 templates:
   transcript: transcript.html
 updates: true

@@ -129,6 +129,7 @@ model Guild {
     staleAfter    Int?
     successColour String     @default("Green")
     tags          Tag[]
+    teamLeadRoles Json      @default("[]")
     tickets       Ticket[]
     workingHours  Json       @default("[\"UTC\", [\"00:00\",\"23:59\"], [\"00:00\",\"23:59\"], [\"00:00\",\"23:59\"], [\"00:00\",\"23:59\"], [\"00:00\",\"23:59\"], [\"00:00\",\"23:59\"], [\"00:00\",\"23:59\"]]")
 

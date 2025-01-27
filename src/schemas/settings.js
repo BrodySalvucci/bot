@@ -5,6 +5,7 @@ module.exports = joi.object({
 	autoClose: joi.number().min(3_600_000).optional(),
 	autoTag: [joi.array(), joi.string().valid('ticket', '!ticket', 'all')].optional(),
 	blocklist: joi.array().optional(),
+	teamLeadRoles: joi.array().items(joi.string()).optional(),
 	createdAt: joi.string().optional(),
 	errorColour: joi.string().optional(),
 	footer: joi.string().optional(),
